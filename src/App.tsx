@@ -1,6 +1,5 @@
 import React from 'react';
 import './App.css';
-import { connect } from 'react-redux';
 import TodoPage from './todos/TodoPage';
 
 const App: React.FunctionComponent = () => {
@@ -12,4 +11,4 @@ const App: React.FunctionComponent = () => {
   );
 };
 
-export default connect()(App);
+export default App;
