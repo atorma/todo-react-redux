@@ -1,5 +1,5 @@
 import React from 'react';
-import { Todo } from './todos-redux';
+import { Todo } from '../types';
 import TodoItem from './TodoItem';
 
 type TodoListProps = {

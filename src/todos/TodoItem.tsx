@@ -1,11 +1,13 @@
 import React from 'react';
-import { Todo } from './todos-redux';
+import { Todo } from '../types';
 
 type TodoItemProps = {
   todo: Todo;
 };
 
-class TodoItem extends React.Component<TodoItemProps> {
+type TodoItemState = {};
+
+class TodoItem extends React.Component<TodoItemProps, TodoItemState> {
   render() {
     return (
       <div className="todo-item">

@@ -1,6 +1,7 @@
 import React, { MouseEvent } from 'react';
 import { Dispatch, AnyAction } from 'redux';
-import { Todo, TodoState, actions as todoActions } from './todos-redux';
+import { Todo, TodoAppState } from '../types';
+import { actionCreators as todoActionCreators } from './todos-redux';
 import TodoList from './TodoList';
 import { connect } from 'react-redux';
 
@@ -44,13 +45,13 @@ class TodoPage extends React.Component<TodoPageProps, TodoPageState> {
   }
 }
 
-function mapStateToProps(state: TodoState) {
+function mapStateToProps(state: TodoAppState) {
   return state;
 }
 
 function mapDispatchToProps(dispatch: Dispatch) {
   return {
-    fetchTodos: () => dispatch(todoActions.fetchTodos())
+    fetchTodos: () => dispatch(todoActionCreators.fetchTodos())
   };
 }
 
