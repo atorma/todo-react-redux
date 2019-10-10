@@ -11,13 +11,13 @@ type TodoListState = {};
 class TodoList extends React.Component<TodoListProps, TodoListState> {
   render() {
     return (
-      <ul>
+      <div>
         {this.props.todos.map((todo: Todo) => (
-          <li key={todo.id}>
+          <div key={todo.id}>
             <TodoItem todo={todo} />
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     );
   }
 }
