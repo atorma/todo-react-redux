@@ -1,4 +1,4 @@
-import { Action, AnyAction } from 'redux';
+import { AnyAction } from 'redux';
 import { ofType } from 'redux-observable';
 import { combineEpics } from 'redux-observable';
 import { Todo } from '../types';

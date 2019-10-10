@@ -1,13 +1,13 @@
 import React from 'react';
 import './App.css';
 import TodoPage from './todos/TodoPage';
+import { Container } from '@material-ui/core';
 
 const App: React.FunctionComponent = () => {
   return (
-    <section className="App">
-      <h1>Todo app</h1>
+    <Container maxWidth="sm">
       <TodoPage />
-    </section>
+    </Container>
   );
 };
 

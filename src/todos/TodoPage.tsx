@@ -22,14 +22,14 @@ class TodoPage extends React.Component<TodoPageProps, TodoPageState> {
   render() {
     return (
       <div>
-        <div>
-          <button type="button" onClick={this.handleFetchClick} disabled={this.props.isLoading}>
-            Fetch
-          </button>
-        </div>
+        <h1>Todos</h1>
         <div>{!this.props.isLoading ? <TodoList todos={this.props.todos} /> : 'Loading...'}</div>
       </div>
     );
+  }
+
+  componentDidMount() {
+    this.props.findAll();
   }
 
   handleFetchClick(event: MouseEvent<HTMLButtonElement>): void {
