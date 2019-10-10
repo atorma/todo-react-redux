@@ -1,36 +1,48 @@
-import { Todo, TodoService } from '../types';
-import * as RxOperators from 'rxjs/operators';
-import cloneDeep from 'lodash/cloneDeep';
+import { Todo } from '../types';
 import cuid from 'cuid';
 import { Observable, of, throwError } from 'rxjs';
+import { fromFetch } from 'rxjs/fetch';
+import { switchMap } from 'rxjs/operators';
 
-const database: Todo[] = [createTodo(), createTodo()];
+const BASE_URL = 'http://localhost:3001/todos';
 
-function createTodo(): Todo {
-  const id = cuid();
-  return {
-    id,
-    title: `Todo ${id}`
-  };
-}
-
-class MockTodoService implements TodoService {
-  delete(todo: Todo): Observable<void> {
-    return of();
-  }
-
+class TodoService implements TodoService {
   findAll(): Observable<Todo[]> {
-    return of(cloneDeep(database)).pipe(RxOperators.delay(1000));
+    return fromFetch(BASE_URL).pipe(handleJsonResponse);
   }
 
-  getById(id: number): Observable<Todo> {
-    return throwError({ status: 404 });
+  getById(id: string): Observable<Todo> {
+    return fromFetch(`${BASE_URL}/${id}`).pipe(handleJsonResponse);
   }
 
-  save(todo: Todo[]): Observable<Todo> {
-    return throwError({ status: 400 });
+  save(todo: Todo): Observable<Todo> {
+    if (!todo) {
+      return throwError(new Error('Empty todo'));
+    }
+    if (!todo.id) {
+      todo.id = cuid();
+      return fromFetch(BASE_URL, { method: 'POST' }).pipe(handleJsonResponse);
+    } else {
+      return fromFetch(`${BASE_URL}/${todo.id}`, { method: 'PUT' }).pipe(handleJsonResponse);
+    }
+  }
+
+  delete(todo: Todo): Observable<Todo> {
+    if (!todo || !todo.id) {
+      return of(todo);
+    }
+    return fromFetch(`${BASE_URL}/${todo.id}`, { method: 'DELETE' }).pipe(handleJsonResponse);
   }
 }
 
-const todoService: MockTodoService = new MockTodoService();
+const handleJsonResponse = switchMap(
+  (response: Response): Promise<any> => {
+    if (!response.ok) {
+      throw response;
+    }
+    return response.json();
+  }
+);
+
+const todoService: TodoService = new TodoService();
 export default todoService;
