@@ -7,8 +7,8 @@ import { connect } from 'react-redux';
 
 type TodoPageProps = {
   todos: Todo[];
-  isProcessing: boolean;
-  fetchTodos(): AnyAction;
+  isLoading: boolean;
+  findAll(): AnyAction;
 };
 
 type TodoPageState = {};
@@ -23,17 +23,11 @@ class TodoPage extends React.Component<TodoPageProps, TodoPageState> {
     return (
       <div>
         <div>
-          <button type="button" onClick={this.handleFetchClick} disabled={this.props.isProcessing}>
+          <button type="button" onClick={this.handleFetchClick} disabled={this.props.isLoading}>
             Fetch
           </button>
         </div>
-        <div>
-          {!this.props.isProcessing ? (
-            <TodoList todos={this.props.todos} isProcessing={this.props.isProcessing} />
-          ) : (
-            'Loading...'
-          )}
-        </div>
+        <div>{!this.props.isLoading ? <TodoList todos={this.props.todos} /> : 'Loading...'}</div>
       </div>
     );
   }
@@ -41,17 +35,17 @@ class TodoPage extends React.Component<TodoPageProps, TodoPageState> {
   handleFetchClick(event: MouseEvent<HTMLButtonElement>): void {
     event.preventDefault();
     event.stopPropagation();
-    this.props.fetchTodos();
+    this.props.findAll();
   }
 }
 
 function mapStateToProps(state: TodoAppState) {
-  return state;
+  return { todos: state.todos, isLoading: state.isLoading };
 }
 
 function mapDispatchToProps(dispatch: Dispatch) {
   return {
-    fetchTodos: () => dispatch(todoActionCreators.fetchTodos())
+    findAll: () => dispatch(todoActionCreators.findAll())
   };
 }
 

@@ -5,5 +5,8 @@ export interface Todo {
 
 export type TodoAppState = {
   todos: Todo[];
-  isProcessing: boolean;
+  isLoading: boolean;
+  isProcessingTodo: {
+    [todoId: string]: boolean;
+  };
 };

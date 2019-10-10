@@ -4,7 +4,6 @@ import TodoItem from './TodoItem';
 
 type TodoListProps = {
   todos: Todo[];
-  isProcessing: boolean;
 };
 
 type TodoListState = {};
