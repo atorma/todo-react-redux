@@ -31,7 +31,14 @@ class TodoService implements TodoService {
     if (!todo || !todo.id) {
       return of(todo);
     }
-    return fromFetch(`${BASE_URL}/${todo.id}`, { method: 'DELETE' }).pipe(handleJsonResponse);
+    return fromFetch(`${BASE_URL}/${todo.id}`, { method: 'DELETE' }).pipe(
+      switchMap((response: Response) => {
+        if (!response.ok) {
+          throw response;
+        }
+        return of(todo);
+      })
+    );
   }
 }
 
