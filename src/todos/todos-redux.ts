@@ -5,12 +5,15 @@ import { Todo } from '../types';
 import todoService from './todo-service';
 import { concatMap, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import _ from 'lodash';
 
 enum TodoActionType {
   FIND_ALL = 'TODO_FIND_ALL',
   FIND_ALL_FULFILLED = 'TODO_FIND_ALL_FULFILLED',
   DELETE = 'TODO_DELETE',
-  DELETE_FULFILLED = 'DELETE_FULFILLED'
+  DELETE_FULFILLED = 'DELETE_FULFILLED',
+  SAVE = 'TODO_SAVE',
+  SAVE_FULFILLED = 'TODO_SAVE_FULFILLED'
 }
 
 function findAll() {
@@ -27,10 +30,10 @@ const findAllEpic = (action$: Observable<AnyAction>) => {
   );
 };
 
-function del(todo: Todo) {
+function del(todo: Todo): AnyAction {
   return { type: TodoActionType.DELETE, todo };
 }
-function delFulfilled(todo: Todo) {
+function delFulfilled(todo: Todo): AnyAction {
   return { type: TodoActionType.DELETE_FULFILLED, todo };
 }
 const delEpic = (action$: Observable<AnyAction>) => {
@@ -41,17 +44,40 @@ const delEpic = (action$: Observable<AnyAction>) => {
   );
 };
 
-function todosReducer(state: Todo[] = [], action: AnyAction) {
+function save(todo: Todo): AnyAction {
+  return { type: TodoActionType.SAVE, todo };
+}
+function saveFulfilled(todo: Todo): AnyAction {
+  return { type: TodoActionType.SAVE_FULFILLED, todo };
+}
+const saveEpic = (action$: Observable<AnyAction>) => {
+  return action$.pipe(
+    ofType(TodoActionType.SAVE),
+    concatMap(action => todoService.save(action.todo)),
+    map(saveFulfilled)
+  );
+};
+
+function todosReducer(todos: Todo[] = [], action: AnyAction) {
   switch (action.type) {
     case TodoActionType.FIND_ALL_FULFILLED:
       return action.todos;
     case TodoActionType.DELETE_FULFILLED:
       if (!action.todo) {
-        return state;
+        return todos;
       }
-      return state.filter((todo: Todo) => todo.id !== action.todo.id);
+      return _.filter(todos, todo => todo.id !== action.todo.id);
+    case TodoActionType.SAVE_FULFILLED:
+      todos = _.clone(todos);
+      const oldTodoIndex: number = _.findIndex(todos, { id: action.todo.id });
+      if (oldTodoIndex > -1) {
+        todos[oldTodoIndex] = action.todo;
+      } else {
+        todos.push(action.todo);
+      }
+      return todos;
     default:
-      return state;
+      return todos;
   }
 }
 
@@ -68,11 +94,13 @@ function isLoadingReducer(state: boolean = false, action: AnyAction) {
 
 function isProcessingTodoReducer(state: { [todoId: string]: boolean } = {}, action: AnyAction) {
   switch (action.type) {
+    case TodoActionType.SAVE:
     case TodoActionType.DELETE:
       if (!action.todo || !action.todo.id) {
         return state;
       }
       return Object.assign({}, state, { [action.todo.id]: true });
+    case TodoActionType.SAVE_FULFILLED:
     case TodoActionType.DELETE_FULFILLED:
       if (!action.todo || !action.todo.id) {
         return state;
@@ -87,6 +115,7 @@ function isProcessingTodoReducer(state: { [todoId: string]: boolean } = {}, acti
 
 export const actionCreators = {
   findAll,
+  save,
   del
 };
 
@@ -96,4 +125,4 @@ export const reducers = {
   isProcessingTodo: isProcessingTodoReducer
 };
 
-export const rootEpic = combineEpics(findAllEpic, delEpic);
+export const rootEpic = combineEpics(findAllEpic, saveEpic, delEpic);

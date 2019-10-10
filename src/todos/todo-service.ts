@@ -3,6 +3,7 @@ import cuid from 'cuid';
 import { Observable, of, throwError } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
 import { switchMap } from 'rxjs/operators';
+import _ from 'lodash';
 
 const BASE_URL = 'http://localhost:3001/todos';
 
@@ -19,11 +20,20 @@ class TodoService implements TodoService {
     if (!todo) {
       return throwError(new Error('Empty todo'));
     }
-    if (!todo.id) {
+    const requestInit: RequestInit = {
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(todo)
+    };
+    if (_.isEmpty(todo.id)) {
       todo.id = cuid();
-      return fromFetch(BASE_URL, { method: 'POST' }).pipe(handleJsonResponse);
+      return fromFetch(BASE_URL, Object.assign(requestInit, { method: 'POST' })).pipe(
+        handleJsonResponse
+      );
     } else {
-      return fromFetch(`${BASE_URL}/${todo.id}`, { method: 'PUT' }).pipe(handleJsonResponse);
+      return fromFetch(
+        `${BASE_URL}/${todo.id}`,
+        Object.assign(requestInit, { method: 'PUT' })
+      ).pipe(handleJsonResponse);
     }
   }
 
