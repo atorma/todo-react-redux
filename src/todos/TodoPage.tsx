@@ -4,6 +4,7 @@ import { Todo, TodoAppState } from '../types';
 import { actionCreators as todoActionCreators } from './todos-redux';
 import TodoList from './TodoList';
 import { connect } from 'react-redux';
+import { CircularProgress } from '@material-ui/core';
 
 type TodoPageProps = {
   todos: Todo[];
@@ -23,7 +24,13 @@ class TodoPage extends React.Component<TodoPageProps, TodoPageState> {
     return (
       <div>
         <h1>Todos</h1>
-        <div>{!this.props.isLoading ? <TodoList todos={this.props.todos} /> : 'Loading...'}</div>
+        <div>
+          {!this.props.isLoading ? (
+            <TodoList todos={this.props.todos} />
+          ) : (
+            <CircularProgress size="64px" />
+          )}
+        </div>
       </div>
     );
   }
