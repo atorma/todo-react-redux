@@ -22,16 +22,14 @@ class TodoPage extends React.Component<TodoPageProps, TodoPageState> {
 
   render() {
     return (
-      <div>
+      <>
         <h1>Todos</h1>
-        <div>
-          {!this.props.isLoading ? (
-            <TodoList todos={this.props.todos} />
-          ) : (
-            <CircularProgress size="64px" />
-          )}
-        </div>
-      </div>
+        {!this.props.isLoading ? (
+          <TodoList todos={this.props.todos} />
+        ) : (
+          <CircularProgress size="64px" />
+        )}
+      </>
     );
   }
 

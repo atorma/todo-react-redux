@@ -5,6 +5,9 @@ import { Button } from '@material-ui/core';
 import { AnyAction, Dispatch } from 'redux';
 import { actionCreators as todoActionCreators } from './todos-redux';
 import { connect } from 'react-redux';
+import Box from '@material-ui/core/Box';
+import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
 
 type OwnProps = {
   todos: Todo[];
@@ -23,14 +26,19 @@ class TodoList extends React.Component<Props, OwnState> {
 
   render() {
     return (
-      <div>
+      <>
         {this.props.todos.map((todo: Todo) => (
           <TodoItem key={todo.id} todo={todo} />
         ))}
-        <div>
+        {this.props.todos.length === 0 && (
+          <Box my={2}>
+            <Typography>No todos!</Typography>
+          </Box>
+        )}
+        <Grid container direction="row">
           <Button onClick={this.handleAddNewClick}>Add new</Button>
-        </div>
-      </div>
+        </Grid>
+      </>
     );
   }
 
