@@ -25,9 +25,7 @@ class TodoList extends React.Component<Props, OwnState> {
     return (
       <div>
         {this.props.todos.map((todo: Todo) => (
-          <div key={todo.id}>
-            <TodoItem todo={todo} />
-          </div>
+          <TodoItem key={todo.id} todo={todo} />
         ))}
         <div>
           <Button onClick={this.handleAddNewClick}>Add new</Button>
@@ -39,7 +37,7 @@ class TodoList extends React.Component<Props, OwnState> {
   handleAddNewClick(event: MouseEvent<HTMLButtonElement>): void {
     event.preventDefault();
     event.stopPropagation();
-    this.props.saveTodo({ id: '', title: 'New todo' });
+    this.props.saveTodo({ id: '', title: 'New todo', description: '', isCompleted: false });
   }
 }
 

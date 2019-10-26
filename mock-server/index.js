@@ -2,7 +2,7 @@ const jsonServer = require('json-server');
 const server = jsonServer.create();
 const middlewares = jsonServer.defaults();
 const router = jsonServer.router({
-  todos: [{ id: 'todo-0', title: 'First todo' }]
+  todos: [{ id: 'todo-0', title: 'First todo', description: 'Description', isCompleted: false }]
 });
 
 server.use(middlewares);
