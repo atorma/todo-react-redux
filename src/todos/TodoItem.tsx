@@ -13,6 +13,8 @@ import Input from '@material-ui/core/Input';
 import Box from '@material-ui/core/Box';
 import { Checkbox } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
+import { withStyles } from '@material-ui/core/styles';
+import theme from '../theme';
 
 type OwnProps = {
   todo: Todo;
@@ -32,6 +34,31 @@ type OwnState = {
   todo: Todo;
 };
 
+const HeaderGrid = withStyles({
+  root: {
+    marginBottom: theme.spacing(1)
+  }
+})(Grid);
+
+const TitleInput = withStyles({
+  root: {
+    fontSize: '24px'
+  }
+})(Input);
+
+const Title = withStyles({
+  root: { lineHeight: '1.1875em', padding: '6px 0 6px 0' }
+})(Typography);
+
+const Description = withStyles({
+  root: {
+    lineHeight: '1.1875em',
+    padding: '6px 0 6px 0',
+    whiteSpace: 'pre-line',
+    letterSpacing: 'normal'
+  }
+})(Typography);
+
 class TodoItem extends React.Component<Props, OwnState> {
   constructor(props: Props) {
     super(props);
@@ -48,26 +75,39 @@ class TodoItem extends React.Component<Props, OwnState> {
         <form onSubmit={this.handleSubmit} noValidate autoComplete="off">
           <Card>
             <CardContent>
-              <Grid container direction="row">
-                <div>
-                  <Checkbox
-                    checked={this.state.todo.isCompleted}
-                    onChange={this.handleIsCompletedChange}
-                    inputProps={{
-                      'aria-label': 'Is completed'
-                    }}
-                  />
-                </div>
-                <div>
-                  {this.state.isEditing ? (
-                    <>
-                      <Input
+              <Grid container direction="column">
+                <HeaderGrid item container direction="row" alignItems="center">
+                  <Grid item>
+                    <Checkbox
+                      checked={this.state.todo.isCompleted}
+                      onChange={this.handleIsCompletedChange}
+                      inputProps={{
+                        'aria-label': 'Is completed'
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs>
+                    {this.state.isEditing ? (
+                      <TitleInput
                         value={this.state.todo.title}
                         placeholder="Title"
                         fullWidth={true}
                         disabled={this.props.isProcessing}
                         onChange={this.handleTitleChange}
                       />
+                    ) : (
+                      <Title variant="h5" component="h2">
+                        {this.state.todo.title}
+                      </Title>
+                    )}
+                  </Grid>
+                </HeaderGrid>
+                <Grid item container direction="row">
+                  <Grid item>
+                    <div style={{ width: '42px' }} />
+                  </Grid>
+                  <Grid item xs>
+                    {this.state.isEditing ? (
                       <Input
                         multiline={true}
                         value={this.state.todo.description}
@@ -76,41 +116,36 @@ class TodoItem extends React.Component<Props, OwnState> {
                         disabled={this.props.isProcessing}
                         onChange={this.handleDescriptionChange}
                       />
-                    </>
-                  ) : (
-                    <>
-                      <Typography gutterBottom variant="h5" component="h2">
-                        {this.state.todo.title}
-                      </Typography>
-                      <Typography variant="body1" component="p">
-                        {this.state.todo.description}
-                      </Typography>
-                    </>
-                  )}
-                </div>
+                    ) : (
+                      <Description component="p">{this.state.todo.description}</Description>
+                    )}
+                  </Grid>
+                </Grid>
               </Grid>
             </CardContent>
             <CardActions>
-              {!this.state.isEditing && (
-                <Button onClick={this.handleDeleteClick} disabled={this.props.isProcessing}>
-                  Delete
-                </Button>
-              )}
-              {!this.state.isEditing && (
-                <Button onClick={this.handleEditClick} disabled={this.props.isProcessing}>
-                  Edit
-                </Button>
-              )}
-              {this.state.isEditing && (
-                <Button onClick={this.handleCancelClick} disabled={this.props.isProcessing}>
-                  Cancel
-                </Button>
-              )}
-              {this.state.isEditing && (
-                <Button type="submit" disabled={this.props.isProcessing}>
-                  Save
-                </Button>
-              )}
+              <Grid container direction="row" justify="flex-end">
+                {!this.state.isEditing && (
+                  <Button onClick={this.handleDeleteClick} disabled={this.props.isProcessing}>
+                    Delete
+                  </Button>
+                )}
+                {!this.state.isEditing && (
+                  <Button onClick={this.handleEditClick} disabled={this.props.isProcessing}>
+                    Edit
+                  </Button>
+                )}
+                {this.state.isEditing && (
+                  <Button onClick={this.handleCancelClick} disabled={this.props.isProcessing}>
+                    Cancel
+                  </Button>
+                )}
+                {this.state.isEditing && (
+                  <Button type="submit" disabled={this.props.isProcessing}>
+                    Save
+                  </Button>
+                )}
+              </Grid>
             </CardActions>
           </Card>
         </form>
